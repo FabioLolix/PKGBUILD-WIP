@@ -1,7 +1,7 @@
 # Maintainer: 
 
 pkgname=pplib-git
-pkgver=7_0_1.r120.g6ad88fc6
+pkgver=7.0.1.r285.g3a458894
 pkgrel=1
 pkgdesc="Collection of C++ functions and classes"
 arch=(x86_64)
@@ -16,12 +16,12 @@ sha256sums=('SKIP'
 
 pkgver() {
   cd "${pkgname%-git}"
-  git describe --long --tags | sed 's/^REL_//;s/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags | sed 's/^REL_//;s/\([^-]*-g\)/r\1/;s/-/./g;s/_/./g'
 }
 
 prepare() {
   cd "${pkgname%-git}"
-  patch -Np1 -i ../pplib-MagickWand-header.patch
+  #patch -Np1 -i ../pplib-MagickWand-header.patch
 }
 
 build() {
