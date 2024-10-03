@@ -1,14 +1,14 @@
 # Maintainer: 
 
-pkgname=opentesarena
-pkgver=0.13.0.r281.g926ebc14
+pkgname=opentesarena-git
+pkgver=0.15.0.r1.ge2baf89b
 pkgrel=1
 pkgdesc="Modern engine re-implementation for The Elder Scrolls: Arena from 1994 by Bethesda Softworks"
 arch=(x86_64 i686 pentium4 arm armv6h armv7h aarch64)
 url="https://github.com/afritz1/OpenTESArena"
 license=(MIT)
-depends=(sdl2 openal)
-makedepends=(git cmake wildmidi)
+depends=(sdl2 openal wildmidi)
+makedepends=(git cmake)
 provides=(opentesarena)
 conflicts=(opentesarena)
 source=("${pkgname%-git}::git+https://github.com/afritz1/OpenTESArena.git#branch=main")
@@ -34,6 +34,6 @@ build() {
 
 package() {
   cd "${pkgname%-git}/build"
-  install -Dm755 TESArena "${pkgdir}/usr/bin/tesarena"
+  install -Dm755 otesa "${pkgdir}/usr/bin/otesa"
   install -Dm644 ../LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
 }
