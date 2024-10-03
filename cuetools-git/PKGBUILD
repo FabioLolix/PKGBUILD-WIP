@@ -1,13 +1,13 @@
 
 pkgname=cuetools-git
-pkgver=2.2.2.r9.g5208391
+pkgver=2.2.6.r3.g238ebff9
 pkgrel=1
-pkgdesc="FOSS backup client that securely stores encrypted, incremental, compressed backups on cloud storage services and remote file servers"
+pkgdesc="CD image processing suite with optimized lossless encoders in C#"
 arch=(x86_64)
-url="https://www.duplicati.com/"
-license=(LGPL)
+url="https://github.com/gchudov/cuetools.net"
+license=(MIT)
 depends=(mono )
-makedepends=(git nuget mono-msbuild)
+makedepends=(git nuget mono-msbuild dotnet-sdk)
 source=("git+https://github.com/gchudov/cuetools.net.git"
         "git+https://github.com/mono/taglib-sharp.git"
         "git+https://github.com/xiph/flac.git"
@@ -48,17 +48,17 @@ prepare() {
   git config submodule.ThirdParty/taglib-sharp/src/TaglibSharp.Tests/raw-samples.url    "${srcdir}/raw-samples"
   git submodule update
 
-  git apply --directory=ThirdParty/flac ThirdParty/submodule_flac_CUETools.patch --verbose
-  git apply --directory=ThirdParty/MAC_SDK ThirdParty/submodule_MAC_SDK_CUETools.patch --verbose
-  git apply --directory=ThirdParty/taglib-sharp ThirdParty/submodule_taglib-sharp_CUETools.patch --verbose
-  git apply --directory=ThirdParty/WavPack ThirdParty/submodule_WavPack_CUETools.patch --verbose
-  git apply --directory=ThirdParty/WindowsMediaLib ThirdParty/submodule_WindowsMediaLib_CUETools.patch --verbose
+  #git apply --directory=ThirdParty/flac ThirdParty/submodule_flac_CUETools.patch --verbose
+  #git apply --directory=ThirdParty/MAC_SDK ThirdParty/submodule_MAC_SDK_CUETools.patch --verbose
+  #git apply --directory=ThirdParty/taglib-sharp ThirdParty/submodule_taglib-sharp_CUETools.patch --verbose
+  #git apply --directory=ThirdParty/WavPack ThirdParty/submodule_WavPack_CUETools.patch --verbose
+  #git apply --directory=ThirdParty/WindowsMediaLib ThirdParty/submodule_WindowsMediaLib_CUETools.patch --verbose
 }
 
 build() {
   cd cuetools.net/CUETools
 
-  dotnet publish -f netcoreapp3.1 --no-self-contained -r linux-x64
+  dotnet publish --no-self-contained -r linux-x64
 
   #nuget restore
   #msbuild /p:Configuration=Release CUETools.sln
