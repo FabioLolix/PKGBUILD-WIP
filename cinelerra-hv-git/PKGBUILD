@@ -1,0 +1,46 @@
+# Maintainer:
+
+pkgname=cinelerra-hv-git
+pkgver=9.r24.g77553c4
+pkgrel=1
+pkgdesc="Professional video editing and compositing environment"
+arch=(x86_64)
+url="https://cinelerra.org/"
+license=(GPL2)
+depends=(libpng
+)
+makedepends=(alsa-lib atk bzip2 cairo expat fftw flac
+             fontconfig freetype2 fribidi gdk-pixbuf2
+             glu graphite gtk2 harfbuzz libavc1394
+             libdatrie libdv libffi libglvnd libiec61883 libjpeg-turbo
+             libogg libraw1394 libsndfile libthai libusb
+             libtheora libtiff libutil-linux libvdpau libva libvorbis
+             libvpx libx11 libxau libxcb libxcomposite libxcursor
+             libxdamage libxdmcp libxext libxfixes libxft libxi
+             libxinerama libxrandr libxrender libxv numactl opus
+             pango pcre pixman xorg-server libmp4v2
+             #ttf-dejavu
+
+             git
+             yasm nasm cmake libtool
+        	 #libxml2 perl-xml-libxml perl-xml-parser
+        	 xorg-mkfontdir xorg-mkfontscale
+)
+source=("cinelerra-hv::git+https://github.com/heroineworshiper/hvirtual.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd cinelerra-hv
+  git describe --long --tags --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+build() {
+  cd "cinelerra-hv"
+  ./configure --prefix=/usr
+  make -j1
+}
+
+package() {
+  cd "cinelerra-hv"
+  make -j1 DESTDIR="${pkgdir}" install
+}
