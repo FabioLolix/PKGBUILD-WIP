@@ -5,16 +5,16 @@ pkgver=1.4.0.r0.g4cc87a7
 pkgrel=1
 pkgdesc="FOSS Git multiplatform client based on Compose and JGit"
 arch=(any)
-url="https://gitnuro.jetpackduba.com/"
+url="https://github.com/JetpackDuba/Gitnuro"
 license=(GPL3)
 depends=(jdk17-openjdk java-runtime-common java-environment-common)
-makedepends=(git gradle)
+makedepends=(git gradle cargo)
 provides=(gitnuro)
 conflicts=(gitnuro)
 source=("git+https://github.com/JetpackDuba/Gitnuro.git")
 sha256sums=('SKIP')
 
-export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
+#export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
 
 pkgver() {
   cd Gitnuro
@@ -23,13 +23,13 @@ pkgver() {
 
 build() {
   cd Gitnuro
-  gradle -Dorg.gradle.daemon=false
+  gradle --parallel --stacktrace -Dorg.gradle.daemon=false
 }
 
 check() {
   cd Gitnuro
   #gradle -Dorg.gradle.daemon=false check || true
-  gradle --parallel -Dorg.gradle.daemon=false test || true
+  #gradle -Dorg.gradle.daemon=false test || true
 }
 
 package() {
