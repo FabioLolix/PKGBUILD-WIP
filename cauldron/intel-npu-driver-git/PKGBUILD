@@ -1,0 +1,66 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+export GIT_LFS_SKIP_SMUDGE=1
+
+pkgname=intel-npu-driver-git
+pkgver=r55.14d75ba
+pkgrel=1
+pkgdesc=""
+arch=(x86_64)
+url="https://github.com/intel/linux-npu-driver"
+license=(MIT)
+depends=()
+makedepends=(git git-lfs cmake)
+provides=(intel-npu-driver)
+conflicts=(intel-npu-driver)
+source=("git+https://github.com/intel/linux-npu-driver.git"
+        "git+https://github.com/oneapi-src/level-zero.git"
+        "git+https://github.com/intel/level-zero-vpu-extensions.git"
+        "git+https://github.com/openvinotoolkit/vpux_plugin_elf.git"
+        "git+https://github.com/google/googletest.git"
+        "git+https://github.com/jbeder/yaml-cpp.git"
+
+)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+  cd linux-npu-driver
+  git submodule init
+  git config submodule.third_party/level-zero.url "${srcdir}/level-zero"
+  git config submodule.third_party/level-zero-npu-extensions.url "${srcdir}/level-zero-vpu-extensions"
+  git config submodule.third_party/vpux_elf.url "${srcdir}/vpux_plugin_elf"
+  git config submodule.third_party/googletest.url "${srcdir}/googletest"
+  git config submodule.third_party/yaml-cpp.url "${srcdir}/yaml-cpp"
+  git -c protocol.file.allow=always submodule update
+  git submodule update
+
+  echo "git submodule recursive"
+  git submodule update --init --recursive --depth=1
+}
+
+pkgver() {
+  cd linux-npu-driver
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S "linux-npu-driver" -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build build
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -D linux-npu-driver/LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}"
+}
