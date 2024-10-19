@@ -1,0 +1,35 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=libmpcdec-svn
+pkgver=r495
+pkgrel=1
+pkgdesc="Cue File library from Musepack project"
+arch=(x86_64)
+url="https://www.musepack.net/index.php?pg=home"
+license=(GPL2)
+depends=(glibc)
+makedepends=(cmake subversion) #libcuefile libreplaygain-svn
+options=(staticlibs)
+source=("musepack::svn+http://svn.musepack.net/")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd musepack
+  printf "r%s" "$(svnversion | tr -d 'A-z')"
+}
+
+prepare() {
+  cd musepack/libmpcdec/trunk
+  ./autogen.sh
+}
+
+build() {
+  cd musepack/libmpcdec/trunk
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd musepack/libmpcdec/trunk
+  make DESTDIR="${pkgdir}" install
+}

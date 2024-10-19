@@ -1,0 +1,62 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgbase=musepack-svn
+pkgname=(libcuefile-svn libreplaygain-svn mppenc-svn)
+pkgver=r495
+pkgrel=3
+pkgdesc="Cue File library from Musepack project"
+arch=(x86_64)
+url="https://www.musepack.net/index.php?pg=home"
+license=(GPL2)
+depends=(glibc)
+makedepends=(cmake subversion)
+options=(staticlibs)
+source=("musepack::svn+http://svn.musepack.net/")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd musepack
+  printf "r%s" "$(svnversion | tr -d 'A-z')"
+}
+
+package_libcuefile-svn() {
+ provides=(libcuefile)
+ conflicts=(libcuefile)
+  cd musepack/libcuefile
+    cmake -B build -S trunk -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build build
+
+  DESTDIR="${pkgdir}" cmake --install build
+
+  cd trunk
+  cp -r include "${pkgdir}/usr"
+}
+
+package_libreplaygain-svn() {
+ provides=(libreplaygain)
+ conflicts=(libreplaygain)
+  cd musepack
+    cmake -B libreplaygain-build -S libreplaygain -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build libreplaygain-build
+
+  DESTDIR="${pkgdir}" cmake --install libreplaygain-build
+}
+
+package_mppenc-svn() {
+ provides=(mppenc)
+ conflicts=(mppenc)
+  cd musepack/mppenc
+    cmake -B build -S trunk -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build build
+
+  DESTDIR="${pkgdir}" cmake --install build
+}

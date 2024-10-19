@@ -1,0 +1,32 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=libmpc-svn
+pkgver=r495
+pkgrel=1
+pkgdesc="Cue File library from Musepack project"
+arch=(x86_64)
+url="https://www.musepack.net/index.php?pg=home"
+license=(GPL2)
+depends=(glibc)
+makedepends=(cmake subversion libcuefile libreplaygain-svn libmpcdec)
+options=(staticlibs)
+source=("musepack::svn+http://svn.musepack.net/")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd musepack
+  printf "r%s" "$(svnversion | tr -d 'A-z')"
+}
+
+build() {
+  cd musepack/libmpc
+  cmake -B build -S trunk -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

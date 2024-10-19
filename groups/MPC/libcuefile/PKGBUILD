@@ -1,0 +1,30 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=libcuefile
+pkgver=r475
+pkgrel=1
+pkgdesc="Cue File library from Musepack project"
+arch=(x86_64)
+url="https://www.musepack.net/index.php?pg=home"
+license=(GPL2)
+depends=(glibc)
+makedepends=(cmake)
+options=(staticlibs)
+source=("https://files.musepack.net/source/libcuefile_${pkgver}.tar.gz")
+sha256sums=('b681ca6772b3f64010d24de57361faecf426ee6182f5969fcf29b3f649133fe7')
+
+build() {
+  cmake -B build -S "libcuefile_${pkgver}" -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+
+  cd "libcuefile_${pkgver}"
+  cp -r include "${pkgdir}/usr"
+}
+
