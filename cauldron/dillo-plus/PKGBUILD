@@ -1,0 +1,27 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=dillo-plus
+pkgver=3.3.0
+pkgrel=1
+pkgdesc="A lightweight web browser based on Dillo but with many improvements"
+arch=(x86_64)
+url="https://github.com/crossbowerbt/dillo-plus"
+license=(GPL-3.0-only)
+depends=(fltk)
+makedepends=(git)
+options=(!lto)
+source=("git+https://github.com/crossbowerbt/dillo-plus.git#tag=v${pkgver}")
+sha256sums=('07de1f37b9fcc7eb123829baa786fbb372562ed67b82954160725f55a2261c95')
+
+build() {
+  export CFLAGS+=" -w"
+  export CXXFLAGS+=" -w"
+
+  cd dillo-plus
+  make
+}
+
+package() {
+  cd dillo-plus
+  make DESTDIR="${pkgdir}" install
+}
