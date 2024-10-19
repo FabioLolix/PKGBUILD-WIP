@@ -1,7 +1,7 @@
 # Maintainer: 
 
 pkgname=motionbox
-pkgver=1.6.0
+pkgver=2.0.0
 pkgrel=1
 pkgdesc="Video browser from omega movement"
 arch=(x86_64 i686 arm armv6h armv7h aarch64)
@@ -12,12 +12,12 @@ makedepends=(qt5-xmlpatterns)
 optdepends=()
 options=()
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/omega-gg/MotionBox/archive/${pkgver}.tar.gz")
-sha256sums=('49fab9a139dd06e75eb5bd926c90c9b833a097911ac17d44a159239f0c2b0633')
+sha256sums=('6b400b988ef0b3e00330265e68ad1192198d46a245e133547eafb43e5e253c42')
 
 build() {
   cd "${srcdir}/MotionBox-${pkgver}"
-  qmake -r
-  make 
+  qmake MotionBox.pro
+  make
 }
 
 package() {
