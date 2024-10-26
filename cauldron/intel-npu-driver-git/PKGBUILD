@@ -19,19 +19,21 @@ source=("git+https://github.com/intel/linux-npu-driver.git"
         "git+https://github.com/openvinotoolkit/vpux_plugin_elf.git"
         "git+https://github.com/google/googletest.git"
         "git+https://github.com/jbeder/yaml-cpp.git"
-
+        0001-remove-error-for-not-recognized-package_type.patch
 )
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            'SKIP')
+            'SKIP'
+            'f2457b261c0bf6730ee7fa9496f821afdcf8e14a94f211a9867eac387d285f3f')
 
 prepare() {
   cd linux-npu-driver
   git submodule init
-  git config submodule.third_party/level-zero.url "${srcdir}/level-zero"
+  #git config submodule.third_party/level-zero.url "${srcdir}/level-zero"
+  git config submodule.third_party/level-zero.update none
   git config submodule.third_party/level-zero-npu-extensions.url "${srcdir}/level-zero-vpu-extensions"
   git config submodule.third_party/vpux_elf.url "${srcdir}/vpux_plugin_elf"
   git config submodule.third_party/googletest.url "${srcdir}/googletest"
@@ -41,6 +43,8 @@ prepare() {
 
   echo "git submodule recursive"
   git submodule update --init --recursive --depth=1
+
+  patch -Np1 -i ../0001-remove-error-for-not-recognized-package_type.patch
 }
 
 pkgver() {
@@ -49,9 +53,14 @@ pkgver() {
 }
 
 build() {
+  local _flags=(
+    #-DBUILD_GMOCK:BOOL=OFF
+  )
+
   cmake -B build -S "linux-npu-driver" -Wno-dev \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCMAKE_INSTALL_PREFIX=/usr
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    "${_flags[@]}"
 
   cmake --build build
 }
