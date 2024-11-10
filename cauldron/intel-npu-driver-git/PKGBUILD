@@ -3,14 +3,14 @@
 export GIT_LFS_SKIP_SMUDGE=1
 
 pkgname=intel-npu-driver-git
-pkgver=r55.14d75ba
+pkgver=r56.2574490
 pkgrel=1
 pkgdesc=""
 arch=(x86_64)
 url="https://github.com/intel/linux-npu-driver"
 license=(MIT)
 depends=()
-makedepends=(git git-lfs cmake python level-zero-headers level-zero-loader)
+makedepends=(git git-lfs cmake python level-zero-headers level-zero-loader linux-headers)
 provides=(intel-npu-driver)
 conflicts=(intel-npu-driver)
 source=("git+https://github.com/intel/linux-npu-driver.git"
@@ -44,7 +44,9 @@ prepare() {
   echo "git submodule recursive"
   git submodule update --init --recursive --depth=1
 
-  patch -Np1 -i ../0001-remove-error-for-not-recognized-package_type.patch
+  # https://github.com/intel/linux-npu-driver/issues/55#issuecomment-2437282460
+  # Need VERSION_ID= in /etc/os-release (I typed ROLLING) -> build with devtools fails
+  #patch -Np1 -i ../0001-remove-error-for-not-recognized-package_type.patch
 }
 
 pkgver() {
