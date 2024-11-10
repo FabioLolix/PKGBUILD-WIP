@@ -18,16 +18,13 @@ source=("git+https://github.com/intel/linux-npu-driver.git"
         "git+https://github.com/intel/level-zero-vpu-extensions.git"
         "git+https://github.com/openvinotoolkit/vpux_plugin_elf.git"
         "git+https://github.com/google/googletest.git"
-        "git+https://github.com/jbeder/yaml-cpp.git"
-        0001-remove-error-for-not-recognized-package_type.patch
-)
+        "git+https://github.com/jbeder/yaml-cpp.git")
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
-            'SKIP'
-            'f2457b261c0bf6730ee7fa9496f821afdcf8e14a94f211a9867eac387d285f3f')
+            'SKIP')
 
 prepare() {
   cd linux-npu-driver
