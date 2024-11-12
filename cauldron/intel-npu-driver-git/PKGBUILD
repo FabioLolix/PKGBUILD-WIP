@@ -3,28 +3,36 @@
 export GIT_LFS_SKIP_SMUDGE=1
 
 pkgname=intel-npu-driver-git
-pkgver=r56.2574490
+pkgver=1.10.0.r0.g2574490
 pkgrel=1
 pkgdesc=""
 arch=(x86_64)
 url="https://github.com/intel/linux-npu-driver"
 license=(MIT)
-depends=()
-makedepends=(git git-lfs cmake python level-zero-headers level-zero-loader linux-headers)
+depends=(glibc gcc-libs openssl level-zero-loader opencv yaml-cpp gtest)
+makedepends=(git git-lfs cmake python level-zero-headers linux-api-headers)
 provides=(intel-npu-driver)
 conflicts=(intel-npu-driver)
 source=("git+https://github.com/intel/linux-npu-driver.git"
-        "git+https://github.com/oneapi-src/level-zero.git"
+        #"git+https://github.com/oneapi-src/level-zero.git"
         "git+https://github.com/intel/level-zero-vpu-extensions.git"
         "git+https://github.com/openvinotoolkit/vpux_plugin_elf.git"
-        "git+https://github.com/google/googletest.git"
-        "git+https://github.com/jbeder/yaml-cpp.git")
+        #"git+https://github.com/google/googletest.git"
+        #"git+https://github.com/jbeder/yaml-cpp.git"
+        intel-npu-driver_version_id.patch::https://github.com/intel/linux-npu-driver/commit/d400bae1272de37295c9921d413baf33101805d3.patch
+        intel-npu-driver_drm_header.patch::https://github.com/intel/linux-npu-driver/commit/4be7b84f1d860e2fcf1c69673bce04ff43433d48.patch
+
+        # patches from https://github.com/xanderlent/intel-npu-driver-rpm
+        0001-Disable-third-party-googletest-and-yaml-cpp.patch
+        0002-Make-firmware-install-respect-CMAKE_INSTALL_PATH.patch
+         )
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
-            'SKIP'
-            'SKIP'
-            'SKIP')
+            '437710e7907bfb15173278ce18805cdefdccdf69dcc0c04c9909c8173d05de7a'
+            'ff37976af12fd1b5640ac931059103562f38a7f6eb728ec50e5dc4c0949ea6b1'
+            '122456dafe8fa6f9454ae8083fd8833bd5bbe373797782e89e199198fa81c7e0'
+            '398c0c9e29557e14d94d8815c32b7fed74ab2d29228a5ee7e6513da4987b3f76')
 
 prepare() {
   cd linux-npu-driver
@@ -33,8 +41,10 @@ prepare() {
   git config submodule.third_party/level-zero.update none
   git config submodule.third_party/level-zero-npu-extensions.url "${srcdir}/level-zero-vpu-extensions"
   git config submodule.third_party/vpux_elf.url "${srcdir}/vpux_plugin_elf"
-  git config submodule.third_party/googletest.url "${srcdir}/googletest"
-  git config submodule.third_party/yaml-cpp.url "${srcdir}/yaml-cpp"
+  #git config submodule.third_party/googletest.url "${srcdir}/googletest"
+  git config submodule.third_party/googletest.update none
+  #git config submodule.third_party/yaml-cpp.url "${srcdir}/yaml-cpp"
+  git config submodule.third_party/yaml-cpp.update none
   git -c protocol.file.allow=always submodule update
   git submodule update
 
@@ -44,11 +54,17 @@ prepare() {
   # https://github.com/intel/linux-npu-driver/issues/55#issuecomment-2437282460
   # Need VERSION_ID= in /etc/os-release (I typed ROLLING) -> build with devtools fails
   #patch -Np1 -i ../0001-remove-error-for-not-recognized-package_type.patch
+  patch -Np1 -i ../intel-npu-driver_version_id.patch
+  patch -Np1 -i ../intel-npu-driver_drm_header.patch
+
+  patch -Np1 -i ../0001-Disable-third-party-googletest-and-yaml-cpp.patch
+  patch -Np1 -i ../0002-Make-firmware-install-respect-CMAKE_INSTALL_PATH.patch
 }
 
 pkgver() {
   cd linux-npu-driver
-  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  #printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  git describe --long --tags --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
@@ -64,11 +80,7 @@ build() {
   cmake --build build
 }
 
-check() {
-  ctest --test-dir build --output-on-failure
-}
-
 package() {
   DESTDIR="$pkgdir" cmake --install build
-  install -D linux-npu-driver/LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D linux-npu-driver/LICENSE.md -t "${pkgdir}/usr/share/licenses/${pkgname}"
 }
