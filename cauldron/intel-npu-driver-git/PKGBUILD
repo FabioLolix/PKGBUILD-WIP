@@ -1,11 +1,12 @@
-# Maintainer: Your Name <youremail@domain.com>
+# Maintainer: 
+# Contributor: Fabio 'Lolix' Loli <fabio.loli@disroot.org>
 
 export GIT_LFS_SKIP_SMUDGE=1
 
 pkgname=intel-npu-driver-git
-pkgver=1.10.0.r0.g2574490
-pkgrel=1
-pkgdesc=""
+pkgver=1.10.0.r1.g9cc443f
+pkgrel=2
+pkgdesc="Intel® NPU (Neural Processing Unit) Driver "
 arch=(x86_64)
 url="https://github.com/intel/linux-npu-driver"
 license=(MIT)
@@ -19,7 +20,6 @@ source=("git+https://github.com/intel/linux-npu-driver.git"
         "git+https://github.com/openvinotoolkit/vpux_plugin_elf.git"
         #"git+https://github.com/google/googletest.git"
         #"git+https://github.com/jbeder/yaml-cpp.git"
-        intel-npu-driver_version_id.patch::https://github.com/intel/linux-npu-driver/commit/d400bae1272de37295c9921d413baf33101805d3.patch
         intel-npu-driver_drm_header.patch::https://github.com/intel/linux-npu-driver/commit/4be7b84f1d860e2fcf1c69673bce04ff43433d48.patch
 
         # patches from https://github.com/xanderlent/intel-npu-driver-rpm
@@ -29,7 +29,6 @@ source=("git+https://github.com/intel/linux-npu-driver.git"
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
-            '437710e7907bfb15173278ce18805cdefdccdf69dcc0c04c9909c8173d05de7a'
             'ff37976af12fd1b5640ac931059103562f38a7f6eb728ec50e5dc4c0949ea6b1'
             '122456dafe8fa6f9454ae8083fd8833bd5bbe373797782e89e199198fa81c7e0'
             '398c0c9e29557e14d94d8815c32b7fed74ab2d29228a5ee7e6513da4987b3f76')
@@ -52,9 +51,6 @@ prepare() {
   git submodule update --init --recursive --depth=1
 
   # https://github.com/intel/linux-npu-driver/issues/55#issuecomment-2437282460
-  # Need VERSION_ID= in /etc/os-release (I typed ROLLING) -> build with devtools fails
-  #patch -Np1 -i ../0001-remove-error-for-not-recognized-package_type.patch
-  patch -Np1 -i ../intel-npu-driver_version_id.patch
   patch -Np1 -i ../intel-npu-driver_drm_header.patch
 
   patch -Np1 -i ../0001-Disable-third-party-googletest-and-yaml-cpp.patch
@@ -63,13 +59,22 @@ prepare() {
 
 pkgver() {
   cd linux-npu-driver
-  #printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
   git describe --long --tags --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
+  # fail to build with -D_FORTIFY_SOURCE=3 (Arch Linux default) https://bbs.archlinux.org/viewtopic.php?id=301124
+  export CFLAGS="${CFLAGS/D_FORTIFY_SOURCE=3/D_FORTIFY_SOURCE=2}"
+  export CXXFLAGS="${CFLAGS/D_FORTIFY_SOURCE=3/D_FORTIFY_SOURCE=2}"
+
   local _flags=(
     #-DBUILD_GMOCK:BOOL=OFF
+    #-DENABLE_NPU_COMPILER_BUILD:BOOL=ON
+    #// Enable building the OpenVINO + NPU Plugin package
+    #-DENABLE_OPENVINO_PACKAGE:BOOL=ON
+    # enabling OPENVINO or NPU_COMPILER_BUILD will download llvm-project and other
+    # untested with pre-packaged openvino
+    # btw openvino package have NPU disabled https://aur.archlinux.org/cgit/aur.git/commit/?h=openvino&id=b4f170ce34cab4ce6906e67d181a80a71f35f073
   )
 
   cmake -B build -S "linux-npu-driver" -Wno-dev \
