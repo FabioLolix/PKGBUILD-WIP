@@ -1,14 +1,14 @@
-# Maintainer: Your Name <youremail@domain.com>
+# Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
 
 pkgname=zathuradbg-git
-pkgver=0.1.0.beta.r0.g9e4fec7
-pkgrel=3
-pkgdesc=""
+pkgver=0.3.0.beta.r9.g158dabf
+pkgrel=1.1
+pkgdesc="Emulation based tool for learning and debugging assembly"
 arch=(x86_64)
 url="https://github.com/ZathuraDbg/ZathuraDbg"
-license=(Emulation based tool for learning and debugging assembly)
+license=(GPL-3.0-only)
 depends=(glibc gcc-libs glfw libglvnd unicorn)
-makedepends=(git cmake nlohmann-json) #keystone capstone boost
+makedepends=(git cmake boost capstone keystone) # 
 provides=(zathuradbg)
 conflicts=(zathuradbg)
 options=(!lto)
@@ -20,8 +20,12 @@ source=("git+https://github.com/ZathuraDbg/ZathuraDbg.git"
         "tinyfiledialogs::git+http://git.code.sf.net/p/tinyfiledialogs/code.git"
         "git+https://github.com/gpakosz/whereami.git"
         "git+https://github.com/boostorg/regex.git"
+        "git+https://github.com/capstone-engine/capstone.git"
+        "git+https://github.com/keystone-engine/keystone.git"
 )
 sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -38,16 +42,6 @@ pkgver() {
 # keystone capstone says are requried but instead 
 
 prepare() {
-  #cd "${srcdir}/ZathuraDbg/vendor/capstone"
-  #rm -rf *
-
-  #cd "${srcdir}/ZathuraDbg/vendor/keystone"
-  #rm -rf *
-
-  # nlohmann-json is included but also want system version
-  #cd "${srcdir}/ZathuraDbg/vendor/json"
-  #rm -rf *
-
   cd "${srcdir}/ImGuiColorTextEdit"
   git submodule init
   git config submodule.vendor/regex.url "${srcdir}/regex"
@@ -55,14 +49,16 @@ prepare() {
 
   cd "${srcdir}/ZathuraDbg"
   git submodule init
-  #git config submodule.PATH/NAME.update none
+  git config submodule.vendor/imgui.url "${srcdir}/imgui"
   git config submodule.imgui.url "${srcdir}/imgui"
   git config submodule.vendor/ordered-map.url "${srcdir}/ordered-map"
   git config submodule.vendor/ImGuiColorTextEdit.url "${srcdir}/ImGuiColorTextEdit"
   git config submodule.vendor/unicorn.update none
-  #git config submodule.vendor/unicorn.url "${srcdir}/unicorn"
   git config submodule.vendor/code.url "${srcdir}/tinyfiledialogs"
+  git config submodule.vendor/tinyfdialogue.update none
   git config submodule.vendor/whereami.url "${srcdir}/whereami"
+  git config submodule.vendor/capstone.url "${srcdir}/capstone"
+  git config submodule.vendor/keystone.url "${srcdir}/keystone"
   git -c protocol.file.allow=always submodule update
 }
 
