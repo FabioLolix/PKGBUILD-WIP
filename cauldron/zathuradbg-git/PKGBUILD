@@ -1,0 +1,85 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=zathuradbg-git
+pkgver=0.1.0.beta.r0.g9e4fec7
+pkgrel=3
+pkgdesc=""
+arch=(x86_64)
+url="https://github.com/ZathuraDbg/ZathuraDbg"
+license=(Emulation based tool for learning and debugging assembly)
+depends=(glibc gcc-libs glfw libglvnd unicorn)
+makedepends=(git cmake nlohmann-json) #keystone capstone boost
+provides=(zathuradbg)
+conflicts=(zathuradbg)
+options=(!lto)
+source=("git+https://github.com/ZathuraDbg/ZathuraDbg.git"
+        "git+https://github.com/ocornut/imgui.git"
+        "git+https://github.com/Tessil/ordered-map.git"
+        "git+https://github.com/HACKE-RC/ImGuiColorTextEdit.git"
+        #"git+https://github.com/unicorn-engine/unicorn.git"
+        "tinyfiledialogs::git+http://git.code.sf.net/p/tinyfiledialogs/code.git"
+        "git+https://github.com/gpakosz/whereami.git"
+        "git+https://github.com/boostorg/regex.git"
+)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+pkgver() {
+  cd ZathuraDbg
+  git describe --long --tags --abbrev=7 | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+# boost is needed by ImGuiColorTextEdit
+# keystone capstone says are requried but instead 
+
+prepare() {
+  #cd "${srcdir}/ZathuraDbg/vendor/capstone"
+  #rm -rf *
+
+  #cd "${srcdir}/ZathuraDbg/vendor/keystone"
+  #rm -rf *
+
+  # nlohmann-json is included but also want system version
+  #cd "${srcdir}/ZathuraDbg/vendor/json"
+  #rm -rf *
+
+  cd "${srcdir}/ImGuiColorTextEdit"
+  git submodule init
+  git config submodule.vendor/regex.url "${srcdir}/regex"
+  git -c protocol.file.allow=always submodule update
+
+  cd "${srcdir}/ZathuraDbg"
+  git submodule init
+  #git config submodule.PATH/NAME.update none
+  git config submodule.imgui.url "${srcdir}/imgui"
+  git config submodule.vendor/ordered-map.url "${srcdir}/ordered-map"
+  git config submodule.vendor/ImGuiColorTextEdit.url "${srcdir}/ImGuiColorTextEdit"
+  git config submodule.vendor/unicorn.update none
+  #git config submodule.vendor/unicorn.url "${srcdir}/unicorn"
+  git config submodule.vendor/code.url "${srcdir}/tinyfiledialogs"
+  git config submodule.vendor/whereami.url "${srcdir}/whereami"
+  git -c protocol.file.allow=always submodule update
+}
+
+build() {
+  local _flags=(
+
+  )
+
+  cmake -B build -S "ZathuraDbg/src" -Wno-dev \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    "${_flags[@]}"
+
+  cmake --build build
+}
+
+package() {
+  #DESTDIR="${pkgdir}" cmake --install build
+  install -D ZathuraDbg/src/Zathura ${pkgdir}/usr/bin/zathuradbg
+}
