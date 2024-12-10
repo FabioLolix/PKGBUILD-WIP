@@ -1,0 +1,15 @@
+# Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org>
+
+pkgname=libperl-shim
+pkgver=1
+pkgrel=1
+pkgdesc="libperl.so link for grok-jpeg2000"
+arch=(any)
+url="https://github.com/FabioLolix"
+license=(Unlicense)
+depends=('perl>=5.40' 'perl<=5.42')
+
+package() {
+  install -d "${pkgdir}/usr/lib"
+  ln -s /usr/lib/perl5/5.40/core_perl/CORE/libperl.so  "${pkgdir}/usr/lib/libperl.so"
+}
