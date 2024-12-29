@@ -4,8 +4,8 @@
 export GIT_LFS_SKIP_SMUDGE=1
 
 pkgname=intel-npu-driver-git
-pkgver=1.10.0.r1.g9cc443f
-pkgrel=2
+pkgver=1.10.1.r0.g93fb54b
+pkgrel=1
 pkgdesc="Intel® NPU (Neural Processing Unit) Driver "
 arch=(x86_64)
 url="https://github.com/intel/linux-npu-driver"
@@ -47,8 +47,8 @@ prepare() {
   git -c protocol.file.allow=always submodule update
   git submodule update
 
-  echo "git submodule recursive"
-  git submodule update --init --recursive --depth=1
+  #echo "git submodule recursive"
+  #git submodule update --init --recursive --depth=1
 
   # https://github.com/intel/linux-npu-driver/issues/55#issuecomment-2437282460
   patch -Np1 -i ../intel-npu-driver_drm_header.patch
@@ -65,7 +65,7 @@ pkgver() {
 build() {
   # fail to build with -D_FORTIFY_SOURCE=3 (Arch Linux default) https://bbs.archlinux.org/viewtopic.php?id=301124
   export CFLAGS="${CFLAGS/D_FORTIFY_SOURCE=3/D_FORTIFY_SOURCE=2}"
-  export CXXFLAGS="${CFLAGS/D_FORTIFY_SOURCE=3/D_FORTIFY_SOURCE=2}"
+  export CXXFLAGS="${CXXFLAGS/D_FORTIFY_SOURCE=3/D_FORTIFY_SOURCE=2}"
 
   local _flags=(
     #-DBUILD_GMOCK:BOOL=OFF
@@ -73,12 +73,12 @@ build() {
     #// Enable building the OpenVINO + NPU Plugin package
     #-DENABLE_OPENVINO_PACKAGE:BOOL=ON
     # enabling OPENVINO or NPU_COMPILER_BUILD will download llvm-project and other
-    # untested with pre-packaged openvino
+    # untested with pre-packaged openvino (update; don't seems o care about it)
     # btw openvino package have NPU disabled https://aur.archlinux.org/cgit/aur.git/commit/?h=openvino&id=b4f170ce34cab4ce6906e67d181a80a71f35f073
   )
 
   cmake -B build -S "linux-npu-driver" -Wno-dev \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_BUILD_TYPE=None \
     -DCMAKE_INSTALL_PREFIX=/usr \
     "${_flags[@]}"
 
