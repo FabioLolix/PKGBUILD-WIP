@@ -1,0 +1,56 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=bottles-next-git
+pkgver=r9.a780c0c
+pkgrel=1
+pkgdesc=""
+arch=(x86_64)
+url="https://github.com/bottlesdevs/bottles-next"
+license=(GPL-3.0-only)
+depends=()
+makedepends=(git just cargo protobuf) #rustup
+provides=()
+conflicts=(bottles)
+options=()
+source=("git+https://github.com/bottlesdevs/bottles-next.git"
+        "git+https://github.com/bottlesdevs/next-server.git"
+        "git+https://github.com/bottlesdevs/next-cli.git"
+        "git+https://github.com/bottlesdevs/next-winebridge.git"
+        "git+https://github.com/bottlesdevs/next-core.git"
+        "git+https://github.com/bottlesdevs/next-docs.git"
+)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+pkgver() {
+  cd bottles-next
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd bottles-next
+  git submodule init
+  git config submodule.next-server.url "${srcdir}/next-server"
+  git config submodule.next-cli.url "${srcdir}/next-cli"
+  git config submodule.next-winebridge.url "${srcdir}/next-winebridge"
+  git config submodule.next-core.url "${srcdir}/next-core"
+  git config submodule.next-docs.url "${srcdir}/next-docs"
+  git -c protocol.file.allow=always submodule update
+}
+
+build() {
+  #rustup default stable
+  #rustup target add x86_64-unknown-linux-gnu
+  #rustup target remove x86_64-pc-windows-gnu
+  cd bottles-next
+  just build
+}
+
+package() {
+  cd bottles-next
+  DESTDIR="${pkgdir}" just install
+}
