@@ -1,8 +1,8 @@
 # Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
 
 pkgname=zathuradbg-git
-pkgver=0.3.0.beta.r9.g158dabf
-pkgrel=1.1
+pkgver=0.3.4.beta.r0.g6c57e88
+pkgrel=1
 pkgdesc="Emulation based tool for learning and debugging assembly"
 arch=(x86_64)
 url="https://github.com/ZathuraDbg/ZathuraDbg"
