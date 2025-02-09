@@ -1,0 +1,32 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=orbinity-desktop-git
+pkgver=r50.ff02493
+pkgrel=1
+pkgdesc=""
+arch=(x86_64)
+url="https://codeberg.org/sasko-usinov/orbitiny-desktop"
+license=()
+depends=(qt5-base) #qt5-x11extras
+makedepends=(git)
+provides=(orbinity-desktop)
+conflicts=(orbinity-desktop)
+options=()
+source=("git+https://codeberg.org/sasko-usinov/orbitiny-desktop.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd orbitiny-desktop
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd orbitiny-desktop
+  qmake orbitiny-desktop.pro
+  make
+}
+
+package() {
+  cd orbitiny-desktop
+  make DESTDIR="${pkgdir}" install
+}
