@@ -6,7 +6,7 @@
 # Contributor: Alexander Rødseth <rodseth@gmail.com>
 
 pkgname=cinelerra-hv-git
-pkgver=9.r49.g079c2397
+pkgver=9.r60.g6e27f6f4
 pkgrel=1
 pkgdesc="Professional video editing and compositing environment - Heroin Virtual version"
 arch=(x86_64)
