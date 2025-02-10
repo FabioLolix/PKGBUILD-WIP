@@ -1,7 +1,7 @@
 # Maintainer: Your Name <youremail@domain.com>
 
 pkgname=orbinity-desktop-git
-pkgver=r50.ff02493
+pkgver=r59.3eccbfc
 pkgrel=1
 pkgdesc=""
 arch=(x86_64)
