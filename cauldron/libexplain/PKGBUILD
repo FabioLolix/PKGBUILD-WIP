@@ -1,0 +1,25 @@
+# Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
+
+pkgname=libexplain
+pkgver=1.4
+pkgrel=1
+pkgdesc="Library which may be used to explain Unix and Linux error messages"
+arch=(x86_64)
+url="https://sourceforge.net/projects/libexplain/"
+license=(GPL-3.0-or-later)
+depends=()
+makedepends=()
+options=()
+source=("https://sourceforge.net/projects/libexplain/files/${pkgver}/libexplain-${pkgver}.tar.gz")
+sha256sums=('28863b65eccc74934e237cac41364cb3c1802c36c9e2318ed0417460fee83f80')
+
+build() {
+  cd "libexplain-${pkgver}"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "libexplain-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+}
