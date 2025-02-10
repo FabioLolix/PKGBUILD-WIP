@@ -1,0 +1,34 @@
+From 864f42980595a834dbdf104db17504d9b52dbbdf Mon Sep 17 00:00:00 2001
+From: FabioLolix <fabio.loli@disroot.org>
+Date: Mon, 10 Feb 2025 23:54:44 +0100
+Subject: [PATCH] Update ipc_perm.c
+
+---
+ libexplain/buffer/ipc_perm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libexplain/buffer/ipc_perm.c b/libexplain/buffer/ipc_perm.c
+index 97d9257c..f9b927a2 100644
+--- a/libexplain/buffer/ipc_perm.c
++++ b/libexplain/buffer/ipc_perm.c
+@@ -101,7 +101,7 @@ explain_buffer_ipc_perm(explain_string_buffer_t *sb,
+         explain_buffer_int(sb, data->__key);
+ #else
+         explain_string_buffer_puts(sb, "key = ");
+-        explain_buffer_int(sb, data->key);
++        explain_buffer_int(sb, data->__key);
+ #endif
+         explain_string_buffer_puts(sb, ", ");
+     }
+@@ -125,7 +125,7 @@ explain_buffer_ipc_perm(explain_string_buffer_t *sb,
+         explain_buffer_ushort(sb, data->__seq);
+ #else
+         explain_string_buffer_puts(sb, ", seq = ");
+-        explain_buffer_ushort(sb, data->seq);
++        explain_buffer_ushort(sb, data->__seq);
+ #endif
+     }
+     explain_string_buffer_puts(sb, " }");
+-- 
+2.48.1
+
