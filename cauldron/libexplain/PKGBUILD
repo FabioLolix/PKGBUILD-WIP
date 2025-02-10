@@ -12,8 +12,10 @@ depends=()
 makedepends=()
 options=()
 source=("https://sourceforge.net/projects/libexplain/files/${pkgver}/libexplain-${pkgver}.tar.gz"
+        0001-Update-ipc_perm.c.patch
         "http://deb.debian.org/debian/pool/main/libe/libexplain/libexplain_${pkgver}.${_debver}.debian.tar.xz")
 sha256sums=('28863b65eccc74934e237cac41364cb3c1802c36c9e2318ed0417460fee83f80'
+            'c3c0117cded0385e34a50d81364b81b2b933763956e9788dfa0a94f7933e02a8'
             '1a63d62c53c2ccd5b311778cd4b705bc94818d424b29b172793c8f196a4e2951')
 
 prepare() {
@@ -21,9 +23,14 @@ prepare() {
   for patch in ../debian/patches/*.patch; do 
     patch -Np1 < $patch
   done
+
+  patch -Np1 -i ../0001-Update-ipc_perm.c.patch
 }
 
 build() {
+  export CFLAGS+=" -Wno-incompatible-pointer-types"
+  export CXXFLAGS+=" -Wno-incompatible-pointer-types"
+
   cd "libexplain-${pkgver}"
   ./configure --prefix=/usr
   make
