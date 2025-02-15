@@ -9,5 +9,7 @@
 *.log.*
 *.sig
 
+.SRCINFO
+
 pkg/
 src/
