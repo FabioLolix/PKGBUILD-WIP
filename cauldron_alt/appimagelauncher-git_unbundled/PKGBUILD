@@ -2,19 +2,22 @@
 # Contributor: James Kittsmiller (AJSlye) <james@nulogicsystems.com>
 # Contributor: TheAssassin
 
-pkgname=appimagelauncher-git
-pkgver=r1329.3d42d4c
-pkgrel=2
-pkgdesc="A Helper application for running and integrating AppImages."
+pkgname=appimagelauncher-git_unbundled
+pkgver=3.0.0.alpha.4.r1.g3d42d4c
+pkgrel=1
+pkgdesc="A Helper application for running and integrating AppImages. Unbundled tests"
 arch=(x86_64)
 url="https://github.com/TheAssassin/AppImageLauncher"
 license=(MIT)
 depends=(qt5-base qt5-declarative fuse2
+         zsync2-git
+         #libappimage # don't build
 
          # namcap implicit depends
          glibc gcc-libs glib2 zstd cairo librsvg xz libarchive zlib
          )
-makedepends=(git cmake boost qt5-tools libxpm lib32-glibc lib32-gcc-libs tinyxxd patchelf argagg nlohmann-json)
+makedepends=(git cmake boost qt5-tools libxpm lib32-glibc lib32-gcc-libs tinyxxd patchelf argagg nlohmann-json
+             cpr args)
 provides=(appimagelauncher)
 conflicts=(appimagelauncher)
 source=("git+https://github.com/TheAssassin/AppImageLauncher.git"
@@ -24,8 +27,7 @@ sha256sums=('SKIP'
 
 pkgver() {
   cd AppImageLauncher
-  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
-  #git describe --long --tags --exclude continuous | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+  git describe --long --tags --exclude continuous | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 build() {
@@ -35,6 +37,10 @@ build() {
   export CXXFLAGS+=" -w"
 
   local _flags=(
+    #-DUSE_SYSTEM_LIBAPPIMAGE=ON # Fails
+    -DUSE_SYSTEM_ARGS=ON
+    -DUSE_SYSTEM_CPR=ON
+    -DUSE_SYSTEM_ZSYNC2=ON
     -DBUILD_TESTING=OFF
     -DFETCHCONTENT_QUIET=OFF
     -DCPR_FORCE_USE_SYSTEM_CURL=ON
