@@ -4,7 +4,7 @@
 
 pkgname=appimagelauncher-git_unbundled
 pkgver=3.0.0.alpha.4.r1.g3d42d4c
-pkgrel=1
+pkgrel=2
 pkgdesc="A Helper application for running and integrating AppImages. Unbundled tests"
 arch=(x86_64)
 url="https://github.com/TheAssassin/AppImageLauncher"
@@ -17,7 +17,7 @@ depends=(qt5-base qt5-declarative fuse2
          glibc gcc-libs glib2 zstd cairo librsvg xz libarchive zlib
          )
 makedepends=(git cmake boost qt5-tools libxpm lib32-glibc lib32-gcc-libs tinyxxd patchelf argagg nlohmann-json
-             cpr args)
+             cpr)
 provides=(appimagelauncher)
 conflicts=(appimagelauncher)
 source=("git+https://github.com/TheAssassin/AppImageLauncher.git"
@@ -38,12 +38,12 @@ build() {
 
   local _flags=(
     #-DUSE_SYSTEM_LIBAPPIMAGE=ON # Fails
-    -DUSE_SYSTEM_ARGS=ON
+    #-DUSE_SYSTEM_ARGS=ON ## not needed with ystsem CPR seems (CMake Warning: Manually-specified variables were not used by the project:)
     -DUSE_SYSTEM_CPR=ON
     -DUSE_SYSTEM_ZSYNC2=ON
     -DBUILD_TESTING=OFF
     -DFETCHCONTENT_QUIET=OFF
-    -DCPR_FORCE_USE_SYSTEM_CURL=ON
+    #-DCPR_FORCE_USE_SYSTEM_CURL=ON # not needed with sytsem CPR  (CMake Warning: Manually-specified variables were not used by the project:)
   )
 
   cmake -B build -S "AppImageLauncher" -Wno-dev \
