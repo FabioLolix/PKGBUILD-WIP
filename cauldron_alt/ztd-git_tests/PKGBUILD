@@ -1,7 +1,7 @@
 # Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
 
 pkgname=ztd-git_tests
-pkgver=r515.ecec150
+pkgver=r518.cfe0db7
 pkgrel=1
 pkgdesc="thermitegod spacefm dependency"
 arch=(any)
