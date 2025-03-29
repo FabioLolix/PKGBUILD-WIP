@@ -1,14 +1,22 @@
 # Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
 
 pkgname=zathuradbg-git
-pkgver=0.3.4.beta.r0.g6c57e88
+pkgver=0.3.4.beta.r1.g72c7d64
 pkgrel=1
 pkgdesc="Emulation based tool for learning and debugging assembly"
 arch=(x86_64)
 url="https://github.com/ZathuraDbg/ZathuraDbg"
 license=(GPL-3.0-only)
-depends=(glibc gcc-libs glfw libglvnd unicorn)
-makedepends=(git cmake boost capstone keystone) # 
+depends=(glibc gcc-libs glfw libglvnd
+         #unicorn
+        )
+makedepends=(
+    git
+    cmake
+    boost
+    #capstone
+    #keystone
+    )
 provides=(zathuradbg)
 conflicts=(zathuradbg)
 options=(!lto)
@@ -16,7 +24,7 @@ source=("git+https://github.com/ZathuraDbg/ZathuraDbg.git"
         "git+https://github.com/ocornut/imgui.git"
         "git+https://github.com/Tessil/ordered-map.git"
         "git+https://github.com/HACKE-RC/ImGuiColorTextEdit.git"
-        #"git+https://github.com/unicorn-engine/unicorn.git"
+        "git+https://github.com/unicorn-engine/unicorn.git"
         "tinyfiledialogs::git+http://git.code.sf.net/p/tinyfiledialogs/code.git"
         "git+https://github.com/gpakosz/whereami.git"
         "git+https://github.com/boostorg/regex.git"
@@ -24,6 +32,7 @@ source=("git+https://github.com/ZathuraDbg/ZathuraDbg.git"
         "git+https://github.com/keystone-engine/keystone.git"
 )
 sha256sums=('SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -39,7 +48,13 @@ pkgver() {
 }
 
 # boost is needed by ImGuiColorTextEdit
-# keystone capstone says are requried but instead 
+
+# Using git submodules can't link them
+# [100%] Linking CXX executable /build/zathuradbg-git/src/ZathuraDbg/src/Zathura
+# /usr/bin/ld: cannot find -lunicorn: No such file or directory
+# /usr/bin/ld: cannot find -lkeystone: No such file or directory
+# /usr/bin/ld: cannot find -lcapstone: No such file or directory
+# collect2: error: ld returned 1 exit status
 
 prepare() {
   cd "${srcdir}/ImGuiColorTextEdit"
@@ -53,7 +68,8 @@ prepare() {
   git config submodule.imgui.url "${srcdir}/imgui"
   git config submodule.vendor/ordered-map.url "${srcdir}/ordered-map"
   git config submodule.vendor/ImGuiColorTextEdit.url "${srcdir}/ImGuiColorTextEdit"
-  git config submodule.vendor/unicorn.update none
+  #git config submodule.vendor/unicorn.update none
+  git config submodule.vendor/unicorn.url "${srcdir}/unicorn"
   git config submodule.vendor/code.url "${srcdir}/tinyfiledialogs"
   git config submodule.vendor/tinyfdialogue.update none
   git config submodule.vendor/whereami.url "${srcdir}/whereami"
