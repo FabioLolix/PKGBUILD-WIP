@@ -8,14 +8,17 @@ arch=(x86_64)
 url="https://github.com/ZathuraDbg/ZathuraDbg"
 license=(GPL-3.0-only)
 depends=(glibc gcc-libs glfw libglvnd
-         #unicorn
-        )
+
+    )
 makedepends=(
     git
     cmake
     boost
-    #capstone
-    #keystone
+    chrpath
+
+    unicorn
+    capstone
+    keystone
     )
 provides=(zathuradbg)
 conflicts=(zathuradbg)
@@ -49,12 +52,22 @@ pkgver() {
 
 # boost is needed by ImGuiColorTextEdit
 
+# https://github.com/ZathuraDbg/ZathuraDbg/issues/95
+# Really use the system version
+# zathuradbg-git E: Dependency unicorn detected and not included (libraries ['usr/lib/libunicorn.so.2'] needed in files ['usr/bin/zathuradbg'])
+# zathuradbg-git E: Dependency keystone detected and not included (libraries ['usr/lib/libkeystone.so.0'] needed in files ['usr/bin/zathuradbg'])
+# zathuradbg-git E: Dependency capstone detected and not included (libraries ['usr/lib/libcapstone.so.5'] needed in files ['usr/bin/zathuradbg'])
+
 # Using git submodules can't link them
 # [100%] Linking CXX executable /build/zathuradbg-git/src/ZathuraDbg/src/Zathura
 # /usr/bin/ld: cannot find -lunicorn: No such file or directory
 # /usr/bin/ld: cannot find -lkeystone: No such file or directory
 # /usr/bin/ld: cannot find -lcapstone: No such file or directory
 # collect2: error: ld returned 1 exit status
+
+# keystone: want the submodule (but can't link it)
+
+# zathuradbg-git W: Insecure RUNPATH '/usr/local/lib' in file ('usr/bin/zathuradbg')
 
 prepare() {
   cd "${srcdir}/ImGuiColorTextEdit"
@@ -68,13 +81,15 @@ prepare() {
   git config submodule.imgui.url "${srcdir}/imgui"
   git config submodule.vendor/ordered-map.url "${srcdir}/ordered-map"
   git config submodule.vendor/ImGuiColorTextEdit.url "${srcdir}/ImGuiColorTextEdit"
-  #git config submodule.vendor/unicorn.update none
-  git config submodule.vendor/unicorn.url "${srcdir}/unicorn"
+  git config submodule.vendor/unicorn.update none
+  #git config submodule.vendor/unicorn.url "${srcdir}/unicorn"
   git config submodule.vendor/code.url "${srcdir}/tinyfiledialogs"
   git config submodule.vendor/tinyfdialogue.update none
-  git config submodule.vendor/whereami.url "${srcdir}/whereami"
+  #git config submodule.vendor/whereami.url "${srcdir}/whereami"
   git config submodule.vendor/capstone.url "${srcdir}/capstone"
+  #git config submodule.vendor/capstone.update none
   git config submodule.vendor/keystone.url "${srcdir}/keystone"
+  #git config submodule.vendor/keystone.update none
   git -c protocol.file.allow=always submodule update
 }
 
@@ -93,5 +108,6 @@ build() {
 
 package() {
   #DESTDIR="${pkgdir}" cmake --install build
-  install -D ZathuraDbg/src/Zathura ${pkgdir}/usr/bin/zathuradbg
+  install -D ZathuraDbg/src/Zathura "${pkgdir}"/usr/bin/zathuradbg
+  chrpath --delete "${pkgdir}/usr/bin/zathuradbg"
 }
