@@ -1,0 +1,53 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=plasma-studio-git
+pkgver=r977.585d850
+pkgrel=1
+pkgdesc=""
+arch=(x86_64)
+url="https://invent.kde.org/niccolove/plasma-studio"
+license=(GPL-2.0-or-later)
+depends=(
+    kirigami-addons
+    libraw
+    mpv
+    qt6-base
+    qt6-multimedia
+    qt6-quick3d
+    )
+makedepends=(
+    cmake
+    git
+    vulkan-headers
+    )
+provides=(plasma-studio)
+conflicts=(plasma-studio)
+options=()
+source=("git+https://invent.kde.org/niccolove/plasma-studio.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "plasma-studio"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  local _flags=(
+
+  )
+
+  cmake -B build -S "plasma-studio" -Wno-author \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    "${_flags[@]}"
+
+  cmake --build build
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
