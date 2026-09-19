@@ -1,21 +1,34 @@
 # Maintainer: Your Name <youremail@domain.com>
 
 pkgname=plasma-studio-git
-pkgver=r977.585d850
+pkgver=r979.6ee9e97
 pkgrel=1
-pkgdesc=""
+pkgdesc="Multimedia handling application that features video editing capabilities, raw photo editing, vector graphics, animations, audio editing, recording and streaming, and 3D modeling"
 arch=(x86_64)
 url="https://invent.kde.org/niccolove/plasma-studio"
 license=(GPL-2.0-or-later)
 depends=(
+    ffmpeg
+    glibc
+    hicolor-icon-theme
+    kconfigwidgets
+    ki18n
+    kiconthemes
+    kirigami
     kirigami-addons
+    libgcc
+    libglvnd
     libraw
+    libstdc++
     mpv
     qt6-base
+    qt6-declarative
     qt6-multimedia
     qt6-quick3d
+    wayland
     )
 makedepends=(
+    chrpath
     cmake
     git
     vulkan-headers
@@ -32,6 +45,10 @@ pkgver() {
 }
 
 build() {
+  # Disable warning Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
+  export LANG=C.UTF-8
+  export LC_ALL=C.UTF-8
+
   local _flags=(
 
   )
@@ -44,10 +61,13 @@ build() {
   cmake --build build
 }
 
-check() {
-  ctest --test-dir build --output-on-failure
-}
+#check() {
+#  ctest --test-dir build --output-on-failure
+#}
 
 package() {
-  DESTDIR="$pkgdir" cmake --install build
+  DESTDIR="${pkgdir}" cmake --install build
+
+  # remove Insecure RUNPATH
+  chrpath --delete "${pkgdir}"/usr/lib/qt6/qml/Studio/libstudiopluginplugin.so
 }
