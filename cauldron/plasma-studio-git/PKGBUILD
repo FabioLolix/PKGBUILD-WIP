@@ -1,7 +1,7 @@
-# Maintainer: Your Name <youremail@domain.com>
+# Maintainer: Fabio 'Lolix' Loli <fabio.loli@disroot.org> -> https://github.com/FabioLolix
 
 pkgname=plasma-studio-git
-pkgver=r979.6ee9e97
+pkgver=r1887.931c24c4
 pkgrel=1
 pkgdesc="Multimedia handling application that features video editing capabilities, raw photo editing, vector graphics, animations, audio editing, recording and streaming, and 3D modeling"
 arch=(x86_64)
@@ -9,6 +9,7 @@ url="https://invent.kde.org/niccolove/plasma-studio"
 license=(GPL-2.0-or-later)
 depends=(
     ffmpeg
+    glib2
     glibc
     hicolor-icon-theme
     kconfigwidgets
@@ -19,13 +20,16 @@ depends=(
     libgcc
     libglvnd
     libraw
+    libsecret
     libstdc++
+    libva
     mpv
     qt6-base
     qt6-declarative
     qt6-multimedia
     qt6-quick3d
     wayland
+    zlib
     )
 makedepends=(
     chrpath
